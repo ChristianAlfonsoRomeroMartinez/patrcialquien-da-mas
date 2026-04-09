@@ -23,8 +23,15 @@
     </rabbit:bindings>
   </rabbit:topic-exchange>
 
+  <bean id="manejadorOfertasStub" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
+    <property name="serviceUrl" value="rmi://localhost:1199/servicioManejoOfertas" />
+    <property name="serviceInterface" value="edu.eci.arsw.exam.remote.ManejadorOfertasStub" />
+  </bean>
+
   <!-- instantiate AmqpListener a POJO that implements the message listener  -->
-  <bean id="messageListener" class="edu.eci.arsw.exam.events.OffertMessageListener" />
+  <bean id="messageListener" class="edu.eci.arsw.exam.events.OffertMessageListener">
+    <property name="manejadorOfertasStub" ref="manejadorOfertasStub" />
+  </bean>
   <!-- glue the listener and myAnonymousQueue to the container-->
   <rabbit:listener-container id="myListenerContainer" connection-factory="connectionFactory">
     <rabbit:listener ref="messageListener" queues="myAnonymousQueue" />
